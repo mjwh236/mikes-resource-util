@@ -1,4 +1,5 @@
 import os from "os";
+import fs from "fs";
 import express from "express";
 
 const formatBytes = (bytes, decimals = 2) => {
@@ -13,7 +14,7 @@ const formatBytes = (bytes, decimals = 2) => {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 };
 
-const getMemUsage = () => {
+const getMemUsageString = () => {
   const bytesUsed = os.totalmem() - os.freemem();
   const utilization = bytesUsed / os.totalmem();
 
@@ -22,13 +23,44 @@ const getMemUsage = () => {
   )}`;
 };
 
-const startResourceMonitor = (port = 4000) => {
+const getMemUsage = () => {
+  const bytesUsed = os.totalmem() - os.freemem();
+  const utilization = bytesUsed / os.totalmem();
+
+  return {
+    percent: `${utilization.toFixed(2)}%`,
+    bytesUsed: bytesUsed,
+    amountUsed: formatBytes(bytesUsed),
+  };
+};
+
+const logRamUsage = (dir) => {
+  const timeStamp = Date.now();
+  const data = JSON.stringify({ time: timeStamp, ...getMemUsage() });
+
+  fs.writeFileSync(`${dir}/${timeStamp}.json`, data);
+};
+
+/**
+ *
+ * @param {number} port The port to host the resource monitor
+ * @param {*} delay The interval polling rate delay
+ * @param {*} dir The directory to store the resource logs
+ */
+const startResourceMonitor = (port, delay, dir) => {
   const app = express();
   const appPort = port || 4000;
-  const intervalDelay = 30000;
+  const intervalDelay = delay || 30000;
+  const logsDir = dir || "logs";
+
+  if (!fs.existsSync(logsDir)) {
+    console.log(`directory: ${logsDir} does not exist... creating it`);
+    fs.mkdirSync(logsDir);
+  }
 
   setInterval(() => {
-    console.log(getMemUsage());
+    console.log(getMemUsageString());
+    logRamUsage(logsDir);
   }, intervalDelay);
 
   app.get("/", (req, res) => {
@@ -36,12 +68,13 @@ const startResourceMonitor = (port = 4000) => {
   });
 
   app.get("/usage", (req, res) => {
-    res.send(getMemUsage());
+    res.send(getMemUsageString());
   });
 
   app.listen(appPort, () => {
     console.log(`Resource monitor listening on port ${appPort}, `);
-    console.log(getMemUsage());
+    console.log(getMemUsageString());
+    logRamUsage(logsDir);
   });
 };
 
