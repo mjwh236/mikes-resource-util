@@ -1,0 +1,11 @@
+{
+  "name": "mikes-resource-util",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Michael White <mjwh236@uky.edu>",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
