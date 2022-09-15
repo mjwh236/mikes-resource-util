@@ -1,3 +1,9 @@
+/**
+ * TODO
+ * Delete logs after X days
+ * UI Dashboard
+ */
+
 import os from "os";
 import fs from "fs";
 import express from "express";
