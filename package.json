@@ -9,6 +9,14 @@
     "url": "https://github.com/mjwh236/mikes-resource-util.git"
   },
   "type": "module",
+  "keywords": [
+    "backend",
+    "resource",
+    "util",
+    "monitor",
+    "rest",
+    "api"
+  ],
   "dependencies": {
     "express": "^4.18.1"
   }
