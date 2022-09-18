@@ -50,8 +50,8 @@ const logRamUsage = (dir) => {
 /**
  *
  * @param {number} port The port to host the resource monitor
- * @param {*} delay The interval polling rate delay
- * @param {*} dir The directory to store the resource logs
+ * @param {numer} delay The interval polling rate delay in milliseconds
+ * @param {string} dir The directory to store the resource logs
  */
 const startResourceMonitor = (port, delay, dir) => {
   const app = express();
